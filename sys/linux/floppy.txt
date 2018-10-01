@@ -1,0 +1,20 @@
+include <linux/fd.h>
+
+floppy_struct {
+	size	int32
+	sect	int32
+	head	int32
+	track	int32
+	stretch	int32
+	gap	int8
+	rate	int8
+	spec1	int8
+	fmt_gap	int8
+	name	int64
+}
+
+resource fd_floppy[fd]
+
+syz_open_dev$floppy(dev ptr[in, string["/dev/fd#"]], id intptr, flags flags[open_flags]) fd_floppy
+
+ioctl$FDGETPRM(fd fd_floppy, cmd const[FDGETPRM], arg ptr[out, floppy_struct])

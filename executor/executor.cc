@@ -15,6 +15,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <linux/fd.h>
+
 #include "defs.h"
 
 #if defined(__GNUC__)
@@ -970,6 +972,18 @@ void execute_call(thread_t* th)
 		cover_reset(&th->cov);
 	errno = 0;
 	th->res = execute_syscall(call, th->args);
+
+	/*
+	 * Here's where we need some magic. We could send to the executor the
+	 * offsets of every field in a pointer struct, or something something.
+	 * But this little hack shows it at least is theoretically possible.
+	 */
+	if (call->sys_nr == 16 /* ioctl */) {
+		struct floppy_struct *fd = (struct floppy_struct *)th->args[2];
+		if ((unsigned long)fd->name & 0xFFFF000000000000)
+		    fail("name contained kernel pointer %p\n", fd->name);
+	}
+
 	th->reserrno = errno;
 	if (th->res == -1 && th->reserrno == 0)
 		th->reserrno = EINVAL; // our syz syscalls may misbehave

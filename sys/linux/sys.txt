@@ -457,7 +457,6 @@ procfs_file = "auxv", "cmdline", "environ", "autogroup", "cgroup", "clear_refs",
 # These devices are relatively safe (don't reboot and don't corrupt kernel memory).
 # They need a more comprehensive support. But let at least open them for now,
 # maybe fuzzer will be able to skrew them in a useful way.
-syz_open_dev$floppy(dev ptr[in, string["/dev/fd#"]], id intptr, flags flags[open_flags]) fd
 syz_open_dev$vcsn(dev ptr[in, string["/dev/vcs#"]], id intptr, flags flags[open_flags]) fd
 syz_open_dev$vcsa(dev ptr[in, string["/dev/vcsa#"]], id intptr, flags flags[open_flags]) fd
 syz_open_dev$usbmon(dev ptr[in, string["/dev/usbmon#"]], id intptr, flags flags[open_flags]) fd
